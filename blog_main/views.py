@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from .models import *
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+
 # Create your views here.
 
 def blog(request):
@@ -11,5 +13,12 @@ def blog(request):
 
 def filter_category(request , id):
     blogs = Blogs.objects.filter(category= id , status = 'publish')
-    print(blogs)
-    return render(request , 'filteresPost.html' , {'posts' : blogs} )
+    # try:
+    #      category = Category.objects.get(id = id)
+    # except :
+    #     return HttpResponse("Category is not founds")
+    
+    # built in 404 error is category not found 
+    category = get_object_or_404(Category , id = id)
+
+    return render(request , 'filteresPost.html' , {'posts' : blogs , 'category' : category} )
