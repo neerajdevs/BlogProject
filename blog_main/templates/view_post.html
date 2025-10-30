@@ -40,7 +40,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
             
             <div class="lg:col-span-2">
-                <article class="bg-white p-6 sm:p-8 rounded-xl shadow-lg">
+                <article class="bg-white p-6 sm:p-8 rounded-xl shadow-lg mb-10">
                     
                     <header class="mb-8">
                         <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-2 leading-tight">
@@ -66,27 +66,100 @@
                     
                     <section class="post-content text-gray-700 text-lg">
                         <p class="fs-5 mb-4">{{ blog.short_description|default:"No content available." }}</p>
-                        <p class="fs-5 mb-4">{{ blog.description|default:"No content available." }}</p>
-                        
-                        </section>
+                        <div class="prose max-w-none">
+                            {{ blog.description|safe|default:"<p>This is the main content of the blog post. A modern design ensures good spacing and typography for readability.</p>" }}
+                        </div>
+                    </section>
                 </article>
-            </div>
+
+                <section id="comments-section" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6 border-b pb-3">
+                        <i class="fas fa-comments mr-2 text-indigo-600"></i> Comments ({{ comments_count|default:0 }})
+                    </h2>
+
+                    <div class="mb-8 p-6 border border-gray-100 rounded-lg">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Leave a Reply</h4>
+                        <form action="#" method="POST" class="space-y-4">
+                            {% csrf_token %}
+                            
+                            <div>
+                                <textarea name="comment_text" 
+                                          rows="4" 
+                                          required 
+                                          placeholder="Join the discussion..."
+                                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+                                ></textarea>
+                            </div>
+                            
+                            {% if not user.is_authenticated %}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <input type="text" name="name" placeholder="Your Name" required class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                <input type="email" name="email" placeholder="Your Email" required class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            {% endif %}
+                            
+                            <button type="submit" 
+                                    class="px-5 py-2 bg-indigo-600 text-white font-semibold rounded-full hover:bg-indigo-700 transition duration-150 shadow-md">
+                                Post Comment
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="space-y-6">
+                        {% for comment in comment %}
+                     {% comment %}
+                       {% static 'images/avatar.png' %}
+                       {% url 'delete_comment' comment.id %}
+                       {% url 'add_comment' blog.slug|default:'sample-slug' %}
+                     {% endcomment %}   
+                     <div class="flex space-x-4 p-4 border-b border-gray-100 last:border-b-0">
+                            <div class="flex-shrink-0">
+                                <img class="w-10 h-10 rounded-full" src="#" alt="Avatar">
+                            </div>
+                            <div class="flex-grow">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="font-bold text-gray-900">{{ comment.user.username|default:"Anonymous" }}</p>
+                                        <p class="text-xs text-gray-500">{{ comment.created_at|timesince }} ago</p>
+                                    </div>
+                                    
+                                   {% if comment.user == request.user %}
+    <div class="flex space-x-2 text-sm">
+        <button class="text-indigo-500 hover:text-indigo-700 transition duration-150" title="Edit">
+            <i class="fas fa-pen"></i>
+        </button>
+        <a href="#" class="text-red-500 hover:text-red-700 transition duration-150" title="Delete">
+            <i class="fas fa-trash-alt"></i>
+        </a>
+    </div>
+{% endif %}
+                                </div>
+                                <p class="mt-2 text-gray-700">{{ comment.comment|default:"Great article! Very insightful." }}</p>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-center text-gray-500 p-4">Be the first to leave a comment!</p>
+                        {% endfor %}
+                    </div>
+                    
+                </section>
+                </div>
             
             <div class="lg:col-span-1 space-y-8">
                 
                 <div class="bg-white p-6 rounded-xl shadow-lg">
                     <h4 class="text-xl font-bold text-gray-900 mb-4 border-b pb-2">Search</h4>
-                    <div class="flex">
+                    <form class="flex" action="{% url 'search' %}" method="GET">
                         <input class="w-full px-4 py-2 border border-gray-300 rounded-l-lg focus:ring-indigo-500 focus:border-indigo-500" 
                                type="text" 
+                               name="q"
                                placeholder="Enter search term..." 
-                               aria-label="Enter search term..." 
                         />
                         <button class="px-4 py-2 text-white bg-indigo-600 rounded-r-lg hover:bg-indigo-700 transition duration-150" 
-                                type="button">
+                                type="submit">
                             <i class="fas fa-search"></i>
                         </button>
-                    </div>
+                    </form>
                 </div>
                 
                 <div class="bg-white p-6 rounded-xl shadow-lg">
@@ -97,7 +170,8 @@
                                 {{ cat.category_name|default:"Design" }}
                             </a>
                         {% endfor %}
-                        
+                        <a href="#!" class="text-indigo-600 hover:text-indigo-800 transition duration-150 text-sm font-medium truncate">HTML/CSS</a>
+                        <a href="#!" class="text-indigo-600 hover:text-indigo-800 transition duration-150 text-sm font-medium truncate">Tutorials</a>
                     </div>
                 </div>
                 
