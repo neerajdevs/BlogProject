@@ -48,6 +48,9 @@
 
             <div class="flex space-x-3">
               {% if user.is_authenticated %}
+                   <a href="{% url 'dashboard' %}" class="px-4 py-2 text-sm font-semibold rounded-full text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150 shadow-md">Dashboard</a>
+
+                   </a>
                    <a href="{% url 'logout' %}" class="px-4 py-2 text-sm font-semibold rounded-full text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150 shadow-md">Logout</a>
               {% else %}
                    <a href="{% url 'login' %}" class="px-4 py-2 text-sm font-semibold rounded-full text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150 shadow-md">Login</a>
@@ -60,7 +63,7 @@
       
       <nav class="flex justify-center py-4 mb-8 space-x-6 overflow-x-auto border-b border-gray-200">
           {% for cate in category %}
-            <a class="text-sm font-medium text-gray-600 hover:text-indigo-600 transition duration-150" href="{% url 'filter_by_category' cate.id %}">{{cate.category_name}}</a>
+            <a class="text-sm font-medium text-gray-600 hover:text-indigo-600 transition duration-150" href="{% url 'filter_by_category' cate.id %}">{{cate.category_name | truncatewords:1}}</a>
           {% endfor %}
       </nav>
 

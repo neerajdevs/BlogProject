@@ -8,7 +8,7 @@ from django.db.models import Q # Q object import karna zaroori hai
 # Create your views here.
 
 def blog(request):
-    cate_obj = Category.objects.all()
+    cate_obj = Category.objects.all()[:7]
     featured = Blogs.objects.filter(is_featured = True , status = 'publish')
     Nonfeatured = Blogs.objects.filter(is_featured = False , status = 'publish')
     return render(request, 'home.html' , {'category'  : cate_obj , 'featured' : featured ,'Nonfeatured' : Nonfeatured  })
@@ -26,7 +26,7 @@ def filter_category(request , id):
     return render(request , 'filteresPost.html' , {'posts' : blogs , 'category' : category} )
 
 def view_blogs(request , slug):
-    post = get_object_or_404(Blogs , slug = slug , status = 'publish')
+    post = Blogs.objects.filter(slug = slug , status = 'publish').first()
     comments = Comments.objects.filter(blogs = post).order_by('-created')
     comments_count = comments.count()
        

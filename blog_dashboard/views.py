@@ -11,7 +11,10 @@ from django.contrib.auth.decorators import user_passes_test
 # Create your views here.
 @auth_required(login_url='login')
 def dashboard(request):
-    blog_posts = Blogs.objects.all().order_by('created')
+    if request.user.is_superuser:
+        blog_posts = Blogs.objects.all().order_by('created')
+    else:
+        blog_posts = Blogs.objects.filter(author=request.user).order_by('created')
     total_count = blog_posts.count()
     category_count = Category.objects.count()
     return render(request , 'dashboard.html' , {'recent_posts' : blog_posts, 'total_posts' : total_count, 'total_categories' : category_count })

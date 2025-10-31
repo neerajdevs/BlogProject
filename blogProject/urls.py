@@ -6,7 +6,7 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("dashboard/" , include('blog_dashboard.urls')),
     path('', include('blog_main.urls')),
     path("auth/" , include('blog_auth.urls')),
-    path("dashboard/" , include('blog_dashboard.urls')),
 ] + static(settings.MEDIA_URL , document_root = settings.MEDIA_ROOT)
